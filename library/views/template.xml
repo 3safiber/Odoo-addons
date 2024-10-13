@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <template id="books_view_template" name="Book Views">
+    <t t-call="website.layout">
+      <div>
+        <h1>Book List</h1>
+        <t t-if="books">
+          <t t-foreach="books" t-as="book">
+            <div>
+              <t t-esc="book.name" /> <!-- Display book name -->
+            </div>
+          </t>
+        </t>
+        <t t-else="">
+          <div>No books found.</div>
+        </t>
+      </div>
+    </t>
+  </template>
+</odoo>

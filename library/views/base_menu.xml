@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <menuitem id="library_modul_main_menu" name="Library" sequence="1"
+    web_icon="book_test,static\description\icon.png"
+  />
+
+</odoo>

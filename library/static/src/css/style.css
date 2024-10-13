@@ -1,0 +1,12 @@
+.sheet_view{
+  max-width: 70% !important;
+  margin: 0 auto !important;
+}
+
+.header_custom table thead > tr > th {
+  background-color: #7BD3EA !important;
+}
+* {
+  text-align: left !important;
+}
+

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Tree View -->
+  <record id="view_category_tree" model="ir.ui.view">
+    <field name="name">Category Tree View</field>
+    <field name="model">library.category</field>
+    <field name="arch" type="xml">
+      <tree multi_edit="1" class="header_custom">
+        <field name="name" />
+        <field name="description" optional='1' />
+        <field name="book_ids" optional='1' widget="many2many_tags" />
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form View -->
+  <record id="view_category_form" model="ir.ui.view">
+    <field name="name">Category Form View</field>
+    <field name="model">library.category</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet class="sheet_view">
+          <group>
+            <field name="name" />
+            <field name="description" />
+          </group>
+          <notebook>
+            <page string="Books">
+              <field name="book_ids" readonly='1'>
+                <tree>
+                  <field name="name" />
+                  <field name="author" />
+                  <field name="selling_price" />
+                  <field name="state" widget="badge"
+                    decoration-success="state == 'available'"
+                    decoration-warning="state == 'reserved'"
+                    decoration-info="state == 'borrowed'"
+                    decoration-muted="state == 'damaged'" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action -->
+  <record id="action_category" model="ir.actions.act_window">
+    <field name="name">Category</field>
+    <field name="res_model">library.category</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Server Actions -->
+  <record id="action_add_book_category"
+    model="ir.actions.server">
+    <field name="name">Add Book</field>
+    <field name="model_id" ref="model_library_category" />
+    <field name="binding_model_id" ref="model_library_category" />
+    <field name="state">code</field>
+    <field name="code">
+      action = records.open_action_book_category()
+    </field>
+  </record>
+  <!-- Menu Items -->
+  <menuitem id="categorys_menu" name="Categorys" parent="library_modul_main_menu"
+    action="action_category"
+    sequence="20"
+  />
+  <!-- groups="library.library_librarian_group" -->
+
+</odoo>

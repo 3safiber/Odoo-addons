@@ -1,0 +1,10 @@
+<odoo>
+  <data>
+    <record id="book_sequence" model="ir.sequence">
+      <field name="name">Book Seq.</field>
+      <field name="code">book_seq</field>
+      <field name="prefix">B</field>
+      <field name="padding">4</field>
+    </record>
+  </data>
+</odoo>

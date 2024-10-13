@@ -1,0 +1,30 @@
+<odoo>
+
+  <!-- Report action to show: "book report" -->
+  <record id="library_book_report" model="ir.actions.report">
+    <field name="name">Book Report</field>
+    <field name="model">library.book</field>
+    <field name="report_type">qweb-html</field>
+    <field name="binding_model_id" ref="model_library_book" />
+    <field name="binding_type">report</field>
+    <field name="report_name">library.library_book_report_template</field>
+
+
+    <!-- <field name="attachment_use" eval="true" />
+    <field name="attachment">(object.name+'.pdf')</field>
+    <field name="paperformat_id" ref="report.paperformat_euro" />
+    <field name="help">something about book report</field> -->
+
+  </record>
+
+  <!-- template use keywep -->
+  <template id="library_book_report_template">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <t t-foreach="docs" t-as="o">
+          <h1>Book Record</h1>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>

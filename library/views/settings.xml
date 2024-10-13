@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+  <record id="res_config_settings_view_form" model="ir.ui.view">
+    <field name="name">Library settings</field>
+    <field name="model">res.config.settings</field>
+    <field name="priority" eval="10" />
+    <field name="inherit_id" ref="base.res_config_settings_view_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="inside">
+        <div class="app_settings_block" data-string="library" string="Library" data_key="library">
+          <h2>Library set</h2>
+          <div class="row mt16 o_settings_container">
+            <div class="o_setting_left_pane">
+              <label for="note" string="Default note" />
+              <field name="note" />
+            </div>
+          </div>
+        </div>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="library_config_setting_action" model="ir.actions.act_window">
+    <field name="name">Setting</field>
+    <field name="res_model">res.config.settings</field>
+    <field name="view_id" ref="res_config_settings_view_form" />
+    <field name="view_mode">form</field>
+    <field name="target">inline</field>
+    <field name="context">{'module': 'library'}</field>
+  </record>
+
+  <menuitem
+    id="library_configration_menu"
+    name="Configration"
+    sequence="100"
+    parent="library_modul_main_menu" />
+
+  <menuitem
+    id="library_settings_menu"
+    name="Settings"
+    parent="library_configration_menu"
+    action="library_config_setting_action" />
+</odoo>

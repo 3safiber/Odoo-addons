@@ -1,0 +1,31 @@
+<odoo>
+  <data>
+
+    <record id="book-1" model="library.book">
+      <field name="name">Demo book 1</field>
+      <field name="author">Author 1</field>
+      <field name="selling_price">11</field>
+    </record>
+    <record id="book-2" model="library.book">
+      <field name="name">Demo book 2</field>
+      <field name="author">Author 2</field>
+      <field name="selling_price">12</field>
+    </record>
+    <record id="book-3" model="library.book">
+      <field name="name">Demo book 3</field>
+      <field name="author">Author 3</field>
+      <field name="selling_price">13</field>
+    </record>
+    <record id="book-4" model="library.book">
+      <field name="name">Demo book 4</field>
+      <field name="author">Author 4</field>
+      <field name="selling_price">14</field>
+    </record>
+    <record id="book-5" model="library.book">
+      <field name="name">Demo book 5</field>
+      <field name="author">Author 5</field>
+      <field name="selling_price">15</field>
+    </record>
+
+  </data>
+</odoo>
