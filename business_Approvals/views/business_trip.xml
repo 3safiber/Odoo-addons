@@ -1,0 +1,63 @@
+<odoo>
+  <record id="view_approval_request_form_inherit" model="ir.ui.view">
+    <field name="name">approval.request.form.inherit</field>
+    <field name="model">approval.request</field>
+    <field name="inherit_id" ref="approvals.approval_request_view_form" />
+    <field name="arch" type="xml">
+
+
+      <xpath expr="//field[@name='request_owner_id']" position="attributes">
+        <attribute name="invisible">1</attribute>
+      </xpath>
+
+
+      <xpath expr="//sheet/group" position="inside">
+
+        <group invisible="approval_type != 'business_trip'">
+          <field name="request_manager_id" readonly="request_status!='new'" />
+          <field name="trip_type" readonly="request_status!='new'" />
+          <field name="employee_id" readonly="request_status!='new'" />
+          <field name="employee_grade" readonly="request_status!='new'" />
+          <field name="distance" invisible="trip_type!='short_term'"
+            readonly="request_status!='new'" />
+          <field name="location_trip" invisible="distance=='below_70'"
+            readonly="request_status!='new'" />
+          <field name="total_days" readonly="request_status!='new'" />
+          <field name="approval_cycle_type" widget="radio" readonly="request_status!='new'" />
+          <field name="project_id" invisible="approval_cycle_type != 'project'"
+            readonly="request_status!='new'" />
+          <field name="number_of_trips" invisible="trip_type != 'visit_clients'"
+            readonly="request_status!='new'" />
+        </group>
+        <group invisible="approval_type != 'business_trip'">
+          <field name="accommodation_paid_by_company" invisible=" distance != '200_above'"
+            readonly="request_status!='new'" />
+          <field name="international_trip" invisible=" distance != '200_above'"
+            readonly="request_status!='new'" />
+          <field name="car_provided" invisible=" distance != '200_above'"
+            readonly="request_status!='new'" />
+        </group>
+        <group invisible="approval_type != 'business_trip'">
+          <field name="tickets_allowance" readonly="car_provided==1 or request_status!='new'"
+            invisible="distance != '200_above'" />
+          <field name="tickets_allowance_value"
+            invisible="trip_type == 'visit_clients' or distance != '200_above'" />
+        </group>
+        <group invisible="approval_type != 'business_trip' or distance=='below_70'">
+          <field name="daily_allowance" readonly="1"
+            invisible=" trip_type == 'visit_clients' or user_status != 'approved'" />
+        </group>
+        <group invisible=" approval_type != 'business_trip'">
+          <field name="additional_allowance" invisible=" trip_type != 'medium_term'"
+            readonly="request_status!='new'" />
+          <field name="relocation_allowance" readonly="1" invisible=" trip_type != 'long_term'" />
+          <field name="total_compensation" readonly="1" invisible="trip_type=='medium_term'" />
+        </group>
+      </xpath>
+      <xpath expr="//field[@name='location']" position="attributes">
+        <attribute name="invisible">1</attribute>
+      </xpath>
+
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,44 @@
+<odoo>
+  <!-- Define List View for x_grade -->
+  <record id="view_grade_tree" model="ir.ui.view">
+    <field name="name">x.grade.tree</field>
+    <field name="model">x_grade</field>
+    <field name="arch" type="xml">
+      <tree string="Grades">
+        <field name="name" />
+        <field name="company_id" />
+      </tree>
+    </field>
+  </record>
+
+  <!-- Define Form View for x_grade -->
+  <record id="view_grade_form" model="ir.ui.view">
+    <field name="name">x.grade.form</field>
+    <field name="model">x_grade</field>
+    <field name="arch" type="xml">
+      <form string="Grade">
+        <sheet>
+          <group>
+            <field name="name" />
+            <field name="company_id" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action to open the list view of x_grade -->
+  <record id="action_grade_list" model="ir.actions.act_window">
+    <field name="name">Grades</field>
+    <field name="res_model">x_grade</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_grade_tree" />
+  </record>
+
+  <!-- Add Grade Model to the Existing Configuration menu in HR -->
+  <menuitem id="menu_hr_grade"
+    name="Grades"
+    parent="hr.menu_config_recruitment"
+    action="action_grade_list"
+    sequence="10" />
+</odoo>

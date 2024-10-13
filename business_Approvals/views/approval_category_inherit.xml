@@ -1,0 +1,12 @@
+<odoo>
+  <record id="view_approval_category_form_inherit" model="ir.ui.view">
+    <field name="name">approval.category.form.inherit</field>
+    <field name="model">approval.category</field>
+    <field name="inherit_id" ref="approvals.approval_category_view_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='manager_approval']" position="after">
+        <field name="hr_employee" invisible="approval_type != 'business_trip'" />
+      </xpath>
+    </field>
+  </record>
+</odoo>
