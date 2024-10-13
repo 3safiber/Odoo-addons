@@ -115,6 +115,62 @@ class BusinessTripController(http.Controller):
         }
 
     @validate_token
+    @http.route('/v1/api/company', auth="none", type='http', methods=['POST'], csrf=False, cors='*')
+    def api_create_company(self):
+        try:
+            user_id = request.uid
+            user_obj = request.env['res.users'].browse(user_id)
+            env = request.env
+            data = json.loads(request.httprequest.data)
+            name = data.get('name')
+            name = data.get('name')
+            if not name:
+                return request.make_response(
+                    json.dumps(
+                        {'error': 'Name is required', 'status_code': 400}),
+                    headers={'Content-Type': 'application/json;charset=utf-8'},
+                    status=400
+                )
+
+            country_id = data.get('country_id') or False
+            currency_id = data.get('currency_id') or False
+            phone = data.get('phone') or ''
+            email = data.get('email') or ''
+            company_registry = data.get('company_registry') or ''
+
+            company_data = {
+                'name': name,
+                'country_id': country_id or 1,
+                'currency_id': currency_id or 1,
+                'phone': phone or '',
+                'email': email or '',
+                'company_registry': company_registry or '',
+            }
+
+            print(company_data)
+            company = env['res.company'].with_user(
+                user_obj).create(company_data)
+            company_info = company.read(['id', 'name', 'create_date'])[0]
+            for key, value in company_info.items():
+                if isinstance(value, (date, datetime)):
+                    company_info[key] = value.isoformat()
+            return request.make_response(
+                json.dumps(
+                    {'message': 'company created successfully!',
+                     'data': company_info,
+                     'status_code': 200},
+                    sort_keys=True, indent=4),
+                headers={'Content-Type': 'application/json;charset=utf-8'},
+                status=200
+            )
+        except Exception as e:
+            return Response(
+                json.dumps({'error': str(e), 'status_code': 500},
+                           sort_keys=True, indent=4),
+                content_type='application/json;charset=utf-8', status=500
+            )
+
+    @validate_token
     @http.route('/v1/api/approve_trip', auth="none", type='http', methods=['POST'], csrf=False, cors='*')
     def api_approve_trip(self):
         try:
