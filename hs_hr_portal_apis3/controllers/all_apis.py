@@ -1,15 +1,13 @@
-import odoo
-from odoo import http, api, fields
-from odoo.http import request, Response, route
+from odoo import http
+from odoo.http import request, Response
 from datetime import datetime
 from datetime import date
 
 import functools
 import json
-import base64
 import logging
-from odoo import SUPERUSER_ID
 from odoo.exceptions import AccessDenied, AccessError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -29,7 +27,7 @@ def invalid_response(typ, message=None, status=401):
     either from the client or the server."""
     return {
         "code": status,
-        "message": str(message) if str(message) else "wrong arguments (missing validation)",
+        "message": str(message) or "wrong arguments (missing validation)",
         "data": {}
     }
 
@@ -77,12 +75,12 @@ class BusinessTripController(http.Controller):
         try:
             request.session.authenticate(db, username, password)
         except AccessError as aee:
-            return invalid_response("Access error", "Error: %s" % aee.name)
-        except AccessDenied as ade:
+            return invalid_response("Access error", f"Error: {aee.name}")
+        except AccessDenied:
             return invalid_response("Access denied", "Login, password or db invalid")
         except Exception as e:
             # Invalid database error
-            info = "The database name is not valid {}".format((e))
+            info = f"The database name is not valid {e}"
             error = "invalid_database"
             _logger.error(info)
             return invalid_response("wrong database name", error, 403)
@@ -179,11 +177,12 @@ class BusinessTripController(http.Controller):
             env = request.env
             data = json.loads(request.httprequest.data)
             trip_obj = env['approval.request']
-            trip_id = trip_obj.with_user(user_obj).browse(int(data['trip_id']))
-            if trip_id:
-                line_id = trip_id.approver_ids.filtered(
-                    lambda x: x.user_id == user_obj)
-                if line_id:
+            if trip_id := trip_obj.with_user(user_obj).browse(
+                int(data['trip_id'])
+            ):
+                if line_id := trip_id.approver_ids.filtered(
+                    lambda x: x.user_id == user_obj
+                ):
                     if line_id.status != 'approved':
                         trip_id.with_user(user_obj).action_approve()
                         res = {
@@ -222,11 +221,12 @@ class BusinessTripController(http.Controller):
             env = request.env
             data = json.loads(request.httprequest.data)
             trip_obj = env['approval.request']
-            trip_id = trip_obj.with_user(user_obj).browse(int(data['trip_id']))
-            if trip_id:
-                line_id = trip_id.approver_ids.filtered(
-                    lambda x: x.user_id == user_obj)
-                if line_id:
+            if trip_id := trip_obj.with_user(user_obj).browse(
+                int(data['trip_id'])
+            ):
+                if line_id := trip_id.approver_ids.filtered(
+                    lambda x: x.user_id == user_obj
+                ):
                     if line_id.status == 'approved':
                         res = {
                             'msg': 'This is user already approved before'
@@ -265,18 +265,17 @@ class BusinessTripController(http.Controller):
             env = request.env
 
             approval_line_obj = env['approval.approver']
-            approval_line_ids = approval_line_obj.with_user(user_obj).search(
-                [('request_id', '=', trip_id)])
-
-            if approval_line_ids:
-                status_line = []
-                for approve in approval_line_ids:
-                    status_line.append({
+            if approval_line_ids := approval_line_obj.with_user(user_obj).search(
+                [('request_id', '=', trip_id)]
+            ):
+                status_line = [
+                    {
                         'user_id': approve.user_id.id,
                         'user_name': approve.user_id.name,
-                        'status': approve.status
-                    })
-
+                        'status': approve.status,
+                    }
+                    for approve in approval_line_ids
+                ]
                 # Adding request status
                 request_status = approval_line_ids[0].request_id.request_status if approval_line_ids else ''
 
@@ -309,22 +308,19 @@ class BusinessTripController(http.Controller):
             user_obj = request.env['res.users'].browse(user_id)
             env = request.env
             projects = env['project.project'].with_user(user_obj).search([])
-            project_data = []
-            for project in projects:
-                project_data.append({
+            project_data = [
+                {
                     'id': project.id,
                     'name': project.name,
-                })
-
+                }
+                for project in projects
+            ]
             approval_types = env['approval.category'].with_user(
                 user_obj).search([])
-            approval_data = []
-            for approval in approval_types:
-                approval_data.append({
-                    'id': approval.id,
-                    'name': approval.name
-                })
-
+            approval_data = [
+                {'id': approval.id, 'name': approval.name}
+                for approval in approval_types
+            ]
             trip_types = [
                 {'key': 'business_trip_foreigners_ksa',
                     'value': 'Business Trip for foreigners to KSA'},
@@ -458,13 +454,11 @@ class BusinessTripController(http.Controller):
                 )
 
             trip_obj = request.env['approval.request']
-            trip_ids = trip_obj.with_user(user_obj).search(
-                [('employee_id', '=', int(employee_id))])
-
-            if trip_ids:
-                list_trips = []
-                for trip in trip_ids:
-                    list_trips.append({
+            if trip_ids := trip_obj.with_user(user_obj).search(
+                [('employee_id', '=', int(employee_id))]
+            ):
+                list_trips = [
+                    {
                         'id': trip.id,
                         'employee': trip.employee_id.name,
                         'date_start': trip.date_start.strftime('%Y-%m-%d'),
@@ -473,8 +467,10 @@ class BusinessTripController(http.Controller):
                         'total_compensation': trip.total_compensation,
                         'employee_grade': trip.employee_id.grade_id.name,
                         'trip_type': trip.trip_type,
-                        'request_manager': trip.request_manager_id.name
-                    })
+                        'request_manager': trip.request_manager_id.name,
+                    }
+                    for trip in trip_ids
+                ]
                 res = {
                     'msg': 'Trips found successfully',
                     'trips': list_trips
@@ -571,27 +567,29 @@ class BusinessTripController(http.Controller):
                     'Please make sure you are logged in the correct company.')
             match request_unit:
                 case 'day':
-                    request_date_to = data.get('request_date_to')
-                    if not request_date_to:
-                        errors.append(
-                            'The field request_date_to is required')
-                    else:
+                    if request_date_to := data.get('request_date_to'):
                         time_off_data['request_date_to'] = request_date_to
+                    else:
+                        errors.append('The field request_date_to is required')
                 case 'hour':
                     request_hour_from = data.get('request_hour_from')
                     request_hour_to = data.get('request_hour_to')
                     if not request_hour_from or not request_hour_to:
                         errors.append(
-                            'The fields request_hour_from and request_hour_to is required')
+                            'The fields request_hour_from and request_hour_to is required'
+                        )
                     else:
-                        time_off_data.update({
-                            'request_unit_hours': True,
-                            'request_hour_from': request_hour_from,
-                            'request_hour_to': request_hour_to
-                        })
+                        time_off_data.update(
+                            {
+                                'request_unit_hours': True,
+                                'request_hour_from': request_hour_from,
+                                'request_hour_to': request_hour_to,
+                            }
+                        )
                 case _:
                     errors.append(
-                        "The field request_unit is required and must be 'day' or 'hour'!")
+                        "The field request_unit is required and must be 'day' or 'hour'!"
+                    )
             if errors:
                 return request.make_response(
                     json.dumps(

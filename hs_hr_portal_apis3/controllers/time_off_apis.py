@@ -1,16 +1,12 @@
-import odoo
-from odoo import http, api, fields
-from odoo.http import request, Response, route
-from datetime import datetime
-from datetime import date
 
-import functools
+from odoo import http
+from odoo.http import request, Response
+from datetime import date
 import json
-import base64
 import logging
-from odoo.exceptions import AccessDenied, AccessError, UserError
-from odoo import http, api, SUPERUSER_ID
-from odoo.addons.hs_hr_portal_apis2.contrrollers.all_apis import validate_token
+from odoo.exceptions import UserError
+from odoo import http
+from odoo.addons.hs_hr_portal_apis2.controllers.all_apis import validate_token
 
 _logger = logging.getLogger(__name__)
 
@@ -26,9 +22,16 @@ class TimeOffController(http.Controller):
             employee_id = user_obj.employee_id
             if not employee_id:
                 raise UserError('This user has no employee ')
-            allocation_ids = request.env['hr.leave.allocation'].with_user(user_obj).search(
-                [('employee_id', '=', employee_id.id), ('state', '=', 'validate')])
-            if allocation_ids:
+            if (
+                allocation_ids := request.env['hr.leave.allocation']
+                .with_user(user_obj)
+                .search(
+                    [
+                        ('employee_id', '=', employee_id.id),
+                        ('state', '=', 'validate'),
+                    ]
+                )
+            ):
                 holiday_status_ids = allocation_ids.mapped('holiday_status_id')
                 holiday_status_list = [{
                     'name': holiday.name,
@@ -87,9 +90,9 @@ class TimeOffController(http.Controller):
             user_obj = request.env['res.users'].browse(user_id)
             env = request.env
             time_off_obj = env['hr.leave']
-            time_off_ids = time_off_obj.with_user(user_obj).search(
-                [('can_approve', '=', True), ('state', '!=', 'validate')])
-            if time_off_ids:
+            if time_off_ids := time_off_obj.with_user(user_obj).search(
+                [('can_approve', '=', True), ('state', '!=', 'validate')]
+            ):
                 time_off_list = [
                     {
                         'id': off.id,
@@ -133,9 +136,9 @@ class TimeOffController(http.Controller):
                 raise UserError('This user has no employee ')
             env = request.env
             time_off_obj = env['hr.leave']
-            time_off_ids = time_off_obj.with_user(user_obj).search(
-                [('employee_id', '=', employee_id.id)])
-            if time_off_ids:
+            if time_off_ids := time_off_obj.with_user(user_obj).search(
+                [('employee_id', '=', employee_id.id)]
+            ):
                 time_off_list = [
                     {
                         'id': off.id,
@@ -178,9 +181,9 @@ class TimeOffController(http.Controller):
             time_off_obj = env['hr.leave']
             time_off_request_id = json.loads(request.httprequest.data)[
                 'time_off_request_id']
-            time_off_id = time_off_obj.with_user(
-                user_obj).browse(int(time_off_request_id))
-            if time_off_id:
+            if time_off_id := time_off_obj.with_user(user_obj).browse(
+                int(time_off_request_id)
+            ):
                 if time_off_id.state == 'confirm':
                     time_off_id.action_approve()
                     res = {"msg": "The request approved"}
@@ -213,9 +216,9 @@ class TimeOffController(http.Controller):
             time_off_obj = env['hr.leave']
             time_off_request_id = json.loads(request.httprequest.data)[
                 'time_off_request_id']
-            time_off_id = time_off_obj.with_user(
-                user_obj).browse(int(time_off_request_id))
-            if time_off_id:
+            if time_off_id := time_off_obj.with_user(user_obj).browse(
+                int(time_off_request_id)
+            ):
                 if time_off_id.state in ['confirm', 'validate1', 'validate']:
                     time_off_id.action_refuse()
                     res = {"msg": "The request refused"}
@@ -268,12 +271,10 @@ class TimeOffController(http.Controller):
                 })
             if holiday_status_id.support_document:
                 attachment_id = env['ir.attachment'].create({
-                    'datas': data['attachment_base64'],
+                    'data': data['attachment_base64'],
                     'type': 'binary'
                 })
-                time_off_vals.update({
-                    'attachment_ids': [(0, 0, attachment_id)],
-                })
+                time_off_vals['attachment_ids'] = [(0, 0, attachment_id)]
             time_off_id = time_off_obj.with_user(
                 user_obj).create(time_off_vals)
             if time_off_id:
@@ -318,30 +319,35 @@ class TimeOffController(http.Controller):
                     'Please make sure you are logged in the correct company.')
             match request_unit:
                 case 'day':
-                    request_date_to = data.get(
-                        'request_date_to').strftime('%m/%d/%Y')
-                    if not request_date_to:
-                        errors.append(
-                            'The field request_date_to is required')
-                    else:
+                    if request_date_to := data.get('request_date_to').strftime(
+                        '%m/%d/%Y'
+                    ):
                         time_off_data['request_date_to'] = request_date_to
+                    else:
+                        errors.append('The field request_date_to is required')
                 case 'hour':
-                    request_hour_from = data.get(
-                        'request_hour_from').strftime('%m/%d/%Y')
-                    request_hour_to = data.get(
-                        'request_hour_to').strftime('%m/%d/%Y')
+                    request_hour_from = data.get('request_hour_from').strftime(
+                        '%m/%d/%Y'
+                    )
+                    request_hour_to = data.get('request_hour_to').strftime(
+                        '%m/%d/%Y'
+                    )
                     if not request_hour_from or not request_hour_to:
                         errors.append(
-                            'The fields request_hour_from and request_hour_to is required')
+                            'The fields request_hour_from and request_hour_to is required'
+                        )
                     else:
-                        time_off_data.update({
-                            'request_unit_hours': True,
-                            'request_hour_from': request_hour_from,
-                            'request_hour_to': request_hour_to
-                        })
+                        time_off_data.update(
+                            {
+                                'request_unit_hours': True,
+                                'request_hour_from': request_hour_from,
+                                'request_hour_to': request_hour_to,
+                            }
+                        )
                 case _:
                     errors.append(
-                        "The field request_unit is required and must be 'day' or 'hour'!")
+                        "The field request_unit is required and must be 'day' or 'hour'!"
+                    )
             if errors:
                 return request.make_response(
                     json.dumps(
