@@ -1,0 +1,18 @@
+<odoo>
+    <record id="hr_contract_form_inherit" model="ir.ui.view">
+        <field name="name">hr.contract.form.inherit</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <field name="contract_type_id" position="after">
+
+                <field name="generated_time"/>
+
+                <field name="manager_notes"/>
+                <field name="hr_notes"/>
+
+
+            </field>
+        </field>
+    </record>
+</odoo>

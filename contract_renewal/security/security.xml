@@ -1,0 +1,27 @@
+<odoo>
+     <record id="manager_employee_renewal" model="res.groups">
+        <field name="name">Manager</field>
+    </record>
+
+
+<!--    <record id="contract_rule_hr_view" model="ir.model.access">-->
+<!--        <field name="name">hr contract access</field>-->
+<!--        <field name="model_id" ref="contract_renewal.model_contract_renewal"/>-->
+<!--        <field name="group_id" ref="hr_employee_renewal"/>-->
+<!--        <field name="perm_read" eval="1"/>-->
+<!--        <field name="perm_write" eval="1"/>-->
+<!--        <field name="perm_create" eval="1"/>-->
+<!--        <field name="perm_unlink" eval="1"/>-->
+<!--    </record>-->
+
+  <record id="contract_rule_manager_view" model="ir.rule">
+    <field name="name">Manager contract access</field>
+    <field name="model_id" ref="contract_renewal.model_contract_renewal"/>
+    <field name="domain_force">[('name.parent_id.user_id', '=', user.id)]</field>
+    <field name="groups" eval="[(4, ref('manager_employee_renewal'))]"/>
+</record>
+
+
+
+
+</odoo>

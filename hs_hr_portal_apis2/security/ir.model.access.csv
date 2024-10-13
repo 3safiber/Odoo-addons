@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_api_access_token,access_api_access_token,model_api_access_token,,1,1,1,1
+access_hr_employee_public_portal,access_hr_employee_public,hr.model_hr_employee_public,base.group_portal,1,1,1,1
+access_approval_request_portal,access_approval_request,approvals.model_approval_request,base.group_portal,1,1,1,1
+access_approval_approver_portal,access_approval_approver,approvals.model_approval_approver,base.group_portal,1,1,1,1
+access_approval_category_portal,access_approval_category,approvals.model_approval_category,base.group_portal,1,1,1,1
+access_project_project_portal,access_project_project,project.model_project_project,base.group_portal,1,1,1,1
+access_hr_employee_portal,access_hr_employee,hr.model_hr_employee,base.group_portal,1,1,1,1
+access_hr_contract_portal,access_hr_contract,hr_contract.model_hr_contract,base.group_portal,1,1,1,1
+
+
+access_hr_leave_allocation_portal,access_hr_leave_allocation,hr_holidays.model_hr_leave_allocation,base.group_portal,1,1,1,1
+access_hr_leave_type_portal,access_hr_leave_type,hr_holidays.model_hr_leave_type,base.group_portal,1,1,1,1
+access_hr_leave_portal,access_hr_leave,hr_holidays.model_hr_leave,base.group_portal,1,1,1,1
+access_res_users_portal,access_res_users,base.model_res_users,base.group_portal,1,1,1,1
+access_hr_work_entry_type_portal,access_hr_work_entry_type,hr_work_entry_holidays.model_hr_work_entry_type,base.group_portal,1,1,1,1

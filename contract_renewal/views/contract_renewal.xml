@@ -1,0 +1,79 @@
+<odoo>
+
+
+    <record id="view_contract_renewal_tree" model="ir.ui.view">
+        <field name="name">contract.renewal.tree</field>
+        <field name="model">contract.renewal</field>
+        <field name="arch" type="xml">
+            <tree string="Contract Renewals" class="header_customs"
+                  decoration-danger="status == 'rejected'"
+                  decoration-success="status == 'confirmed'"
+                  decoration-warning="status == 'approved_by_manager'"
+                  decoration-info="status == 'approved_by_hr'">
+                <field name="name"/>
+                <field name="department"/>
+
+                <field name="contract_start_date"/>
+                <field name="contract_end_date"/>
+                <field name="new_end_date"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_contract_renewal_form" model="ir.ui.view">
+        <field name="name">contract.renewal.form</field>
+        <field name="model">contract.renewal</field>
+        <field name="arch" type="xml">
+            <form string="Contract Renewal">
+
+                <header>
+                    <field name="status" widget="statusbar">
+                        <widget class="oe_statusbar" name="status"/>
+                        <options>
+                            <option name="progress"/>
+                        </options>
+                    </field>
+
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-secondary"/>
+<!--                    <button name="popupnotification" string="Notification" type="object"/>-->
+                </header>
+                <sheet class='sheet_views'>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="department"/>
+                            <field name="job_position"/>
+                            <field name="contract_type"/>
+                            <field name="related_hr"/>
+                        </group>
+                        <group>
+                            <field name="contract_start_date"/>
+                            <field name="contract_end_date"/>
+                            <field name="new_end_date"/>
+                            <field name="req_date"/>
+
+                        </group>
+
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_contract_renewal" model="ir.actions.act_window">
+        <field name="name">Contract Renewals</field>
+        <field name="res_model">contract.renewal</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="menu_contract_renewal"
+              name="Contract Renewal"
+              parent="hr.menu_hr_employee_payroll"
+              action="action_contract_renewal"/>
+</odoo>

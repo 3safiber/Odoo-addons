@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_hr_contract_create_wizard" model="ir.ui.view">
+        <field name="name">hr.contract.create.wizard.form</field>
+        <field name="model">hr.contract.create.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create New Contract">
+                <group>
+                    <field name="name"/>
+                    <field name="employee_id" />
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="wage"/>
+
+
+                </group>
+                <footer>
+                    <button string="Create" type="object" name="create_contract" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
