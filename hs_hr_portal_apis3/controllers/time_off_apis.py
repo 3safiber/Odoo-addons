@@ -6,7 +6,7 @@ import json
 import logging
 from odoo.exceptions import UserError
 from odoo import http
-from odoo.addons.hs_hr_portal_apis2.controllers.all_apis import validate_token
+from odoo.addons.hs_hr_portal_apis3.controllers.all_apis import validate_token
 
 _logger = logging.getLogger(__name__)
 
